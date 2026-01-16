@@ -1,0 +1,35 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GCS_RAW_BUCKET=${GCS_RAW_BUCKET}
+      - GCS_PROCESSED_BUCKET=${GCS_PROCESSED_BUCKET}
+      - BIGQUERY_DATASET=${BIGQUERY_DATASET}
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+    volumes:
+      - ./src:/app/src:ro
+      - ~/.config/gcloud:/root/.config/gcloud:ro
+    depends_on:
+      - bigquery-emulator
+
+  bigquery-emulator:
+    image: ghcr.io/goccy/bigquery-emulator:latest
+    ports:
+      - "9050:9050"
+      - "9060:9060"
+    command: >
+      --project=${GCP_PROJECT_ID:-test-project} --dataset=${BIGQUERY_DATASET:-document_processing}
+
+  # Optional: Local storage emulator for testing
+  fake-gcs-server:
+    image: fsouza/fake-gcs-server:latest
+    ports:
+      - "4443:4443"
+    command: -scheme http -port 4443
+    volumes:
+      - ./data/gcs-storage:/data
