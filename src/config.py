@@ -92,6 +92,11 @@ class Settings(BaseSettings):
         return f"{self.gcp_project_id}.{self.bigquery_dataset}.deadlines"
 
     @property
+    def financials_table(self) -> str:
+        """Full BigQuery table path for financials."""
+        return f"{self.gcp_project_id}.{self.bigquery_dataset}.financials"
+
+    @property
     def processing_log_table(self) -> str:
         """Full BigQuery table path for processing log."""
         return f"{self.gcp_project_id}.{self.bigquery_dataset}.processing_log"
