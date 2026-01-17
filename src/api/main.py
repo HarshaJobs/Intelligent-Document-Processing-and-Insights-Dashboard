@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api.routes import documents, health
+from src.api.routes import documents, health, reports
 from src.config import get_settings
 
 settings = get_settings()
@@ -62,6 +62,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router)
 app.include_router(documents.router, prefix="/api/v1")
+app.include_router(reports.router, prefix="/api/v1")
 
 
 @app.get("/")
